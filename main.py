@@ -1,73 +1,50 @@
 import subprocess
-from termcolor import colored
-from pprint import pprint
 import inquirer
 
 
-dots = [
-    ("~/.bashrc", "~/Repos/ConfigFiles/.bashrc"),
-    ("~/.config/sxhkd/sxhkdrc", "~/Repos/ConfigFiles/sxhkd/sxhkdrc"),
-    ("~/.config/bspwm/bspwmrc", "~/Repos/ConfigFiles/bspwm/bspwmrc"),
-    ("~/.config/alacritty/alacritty.yml", "~/Repos/ConfigFiles/alacritty/alacritty.yml"),
-    ("~/.config/nvim/init.vim", "~/Repos/ConfigFiles/nvim/init.vim"),
-    ("~/.config/polybar/config", "~/Repos/ConfigFiles/polybar/config")
-]
+class CopyDot:
+    def __init__(self, in_use: str, in_git: str):
+        self.in_use = in_use
+        self.in_git = in_git
 
-w = []
-for (a, b) in dots:
-    c = ["^>", "^<"];f = [];co = ["green", "red"];g = []
-    for t in range(2):
-        y = subprocess.check_output([f'diff {b} {a} | grep "{c[t]}" | wc -l'], shell=True).decode("utf-8").strip("\n")
-        if int(y) > 0:
-            f.append(co[t])
-            w.append(a)
-        else:
-            f.append("white")
-        g.append(y)
-    print(colored("+"+g[0], f[0]), colored("-"+g[1], f[1]), colored(a.split('/')[-1], f[0]))
-    p = a.split('\n')[-1]
+    def get_diff(self):
+        check_nums = []
+        for check in ["^<", "^>"]:
+            check_num = subprocess.check_output(
+                [f'diff {self.in_git} {self.in_use} | grep "{check}" | wc -l'], shell=True)
+            check_nums.append(int(check_num.decode("utf-8").strip("\n")))
+        return check_nums
 
-if len(w) > 0:
-    questions = [
-        inquirer.Checkbox(
-            "diff",
-            message="View diff ",
-            choices=w,
-        ),
-    ]
-    answers = inquirer.prompt(questions)
-    if len(answers["diff"]) > 0:
-        diff = []
-    print("Update")
-    for j in answers["diff"]:
-        for h in dots:
-            if h[0] == j:
-                subprocess.run([f"diff {h[0]} {h[1]} | less"], shell=True)
+    def show_diff(self):
+        subprocess.run([f"diff -u {self.in_git} {self.in_use} | less"], shell=True)
 
-if len(w) > 0:
-    questions = [
-        inquirer.Checkbox(
-            "copy",
-            message="Copy ",
-            choices=w,
-        ),
-    ]
-    answers = inquirer.prompt(questions)
-    if len(answers["copy"]) > 0:
-        copy = []
-        print("Update")
-        for j in answers["copy"]:
-            copy.append(j)
-            print(j) 
-        update = input("[Y/n]: ") 
+    def copy_file(self):
+        subprocess.run([f"/bin/cp -f {self.in_use} {self.in_git}"], shell=True)
 
-        if update.upper() == "Y":
-            for k in copy:
-                for h in dots:
-                    if h[0] == k:
-                        subprocess.run([f"/bin/cp -f {h[0]} {h[1]}"], shell=True)
-                        print(colored(f"copied {h[0]}", "green"))
-        
-                        subprocess.run([f"git add {h[1]}"], shell=True)
-        z = f"git commit -m \" Change {' '.join(l.split('/')[-1] for l in copy)}\""
-        subprocess.run([z], shell=True)
+    def has_diff(self):
+        return False if self.get_diff() == [0, 0] else True
+
+
+
+a = "/home/jake/.config/bspwm/bspwmrc"
+b = "/home/jake/Repos/dotfiles/bspwm/bspwmrc"
+
+copy = CopyDot(a, b)
+if copy.has_diff():
+    copy.show_diff()
+    copy.copy_file()
+
+"""
+
+    def ask_for_files(self, files: list):
+        questions = [
+            inquirer.Checkbox(
+                "diff",
+                message="View diff ",
+                choices=files,
+            ),
+        ]
+        answers = inquirer.prompt(questions)
+        return answers
+
+"""
