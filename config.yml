@@ -1,0 +1,32 @@
+configs:
+    - name: "bspwm"
+      in_use: "/home/jake/.config/bspwm/bspwmrc"
+      in_git: "/home/jake/Repos/dotfiles/bspwm/bspwmrc"
+
+    - name: "sxhkd"
+      in_use: "/home/jake/.config/sxhkd/sxhkdrc"
+      in_git: "/home/jake/Repos/dotfiles/sxhkd/sxhkdrc"
+
+    - name: "alacritty"
+      in_use: "/home/jake/.config/alacritty/alacritty.yml"
+      in_git: "/home/jake/Repos/dotfiles/alacritty/alacritty.yml"
+
+    - name: "nvim"
+      in_use: "/home/jake/.config/nvim/init.vim"
+      in_git: "/home/jake/Repos/dotfiles/nvim/init.vim"
+
+    - name: "rofi"
+      in_use: "/home/jake/.config/rofi/config"
+      in_git: "/home/jake/Repos/dotfiles/rofi/config"
+
+    - name: "polybar"
+      in_use: "/home/jake/.config/polybar/config"
+      in_git: "/home/jake/Repos/dotfiles/polybar/config"
+
+    - name: "dunst"
+      in_use: "/home/jake/.config/dunst/dunstrc"
+      in_git: "/home/jake/Repos/dotfiles/dunst/dunstrc"
+
+    - name: "picom"
+      in_use: "/home/jake/.config/picom/picom.conf"
+      in_git: "/home/jake/Repos/dotfiles/picom/picom.conf"
