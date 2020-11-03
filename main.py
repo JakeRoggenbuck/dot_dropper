@@ -1,5 +1,6 @@
 import subprocess
 import inquirer
+import yaml
 
 
 class CopyDot:
@@ -16,7 +17,7 @@ class CopyDot:
         return check_nums
 
     def show_diff(self):
-        subprocess.run([f"diff -u {self.in_git} {self.in_use} | less"], shell=True)
+        subprocess.run([f"diff -u --color {self.in_git} {self.in_use}"], shell=True)
 
     def copy_file(self):
         subprocess.run([f"/bin/cp -f {self.in_use} {self.in_git}"], shell=True)
@@ -25,26 +26,21 @@ class CopyDot:
         return False if self.get_diff() == [0, 0] else True
 
 
+class Config:
+    def __init__(self, path: str):
+        self.path = path
+        self.config = self.get_config()
 
-a = "/home/jake/.config/bspwm/bspwmrc"
-b = "/home/jake/Repos/dotfiles/bspwm/bspwmrc"
+    def get_config(self):
+        config_file = open(self.path)
+        config = yaml.load(config_file, Loader=yaml.FullLoader)
+        return config
 
-copy = CopyDot(a, b)
-if copy.has_diff():
-    copy.show_diff()
-    copy.copy_file()
 
-"""
-
-    def ask_for_files(self, files: list):
-        questions = [
-            inquirer.Checkbox(
-                "diff",
-                message="View diff ",
-                choices=files,
-            ),
-        ]
-        answers = inquirer.prompt(questions)
-        return answers
-
-"""
+if __name__ == "__main__":
+    config_file = Config("/home/jake/Repos/dot_drop/config.yml").config
+    for config in config_file["configs"]:
+        copy = CopyDot(config["in_use"], config["in_git"])
+        if copy.has_diff():
+            copy.show_diff()
+            copy.copy_file()
