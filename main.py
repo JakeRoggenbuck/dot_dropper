@@ -1,4 +1,5 @@
 import subprocess
+from jakesutils.config import Config
 import yaml
 
 
@@ -25,19 +26,8 @@ class CopyDot:
         return False if self.get_diff() == [0, 0] else True
 
 
-class Config:
-    def __init__(self, path: str):
-        self.path = path
-        self.config = self.get_config()
-
-    def get_config(self):
-        config_file = open(self.path)
-        config = yaml.load(config_file, Loader=yaml.FullLoader)
-        return config
-
-
 if __name__ == "__main__":
-    config_file = Config("/home/jake/Repos/dot_drop/config.yml").config
+    config_file = Config("/home/jake/Repos/dot_drop/config.yml", "yaml").config
     for config in config_file["configs"]:
         copy = CopyDot(config["in_use"], config["in_git"])
         if copy.has_diff():
