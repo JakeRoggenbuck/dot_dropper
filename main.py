@@ -1,5 +1,5 @@
-import subprocess
 from jakesutils.config import Config
+import subprocess
 import yaml
 
 
